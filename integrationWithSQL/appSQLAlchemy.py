@@ -19,7 +19,7 @@ client_table = Table(
 )
 
 account_table = Table(
-    "account",
+    "accounts",
     metadata_obj,
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("type", String),
@@ -32,16 +32,11 @@ account_table = Table(
 with engine.begin() as conn:
     metadata_obj.create_all(conn)
 
-
 with engine.connect() as conn:
 
-    for i in range(30):
-        client = insert(client_table).values(name=fake.name(), cpf=fake.cpf(),
-                                             address=fake.address())
-        result = conn.execute(client)
-
-        account = insert(account_table).values(type='Conta Corrente', agency=1001,
-                                               number=str(fake.aba()), balance=0.0, client_id=i)
-        result = conn.execute(account)
-
-        conn.commit()
+    for i in range(1000):
+        conn.execute(insert(client_table).values(name=fake.name(), cpf=fake.cpf(),
+                                                 address=fake.address()))
+        conn.execute(insert(account_table).values(type='Conta Corrente', agency=1001,
+                                                  number=str(fake.aba()), balance=0.0, client_id=i+1))
+    conn.commit()
