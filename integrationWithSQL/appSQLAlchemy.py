@@ -1,3 +1,4 @@
+import random
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy import Column, Integer, String, DECIMAL, ForeignKey
@@ -35,7 +36,8 @@ Session = sessionmaker(bind=engine)
 with Session.begin() as session:
     for i in range(1000):
         session.add(Client(name=fake.name(), cpf=fake.cpf(), address=fake.address()))
-        session.add(Account(type='Conta Corrente', agency=1001, number=str(fake.aba()), balance=0.0, client_id=i))
+        session.add(Account(type='Conta Corrente', agency=1001, number=str(fake.aba()),
+                            balance=random.uniform(0, 500.00), client_id=i))
 
 with Session.begin() as session:
     stmt = text('SELECT * FROM clients c INNER JOIN accounts a ON a.client_id = c.id')
